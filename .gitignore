@@ -1,0 +1,5 @@
+corpus/pages.jsonl
+node_modules/
+.netlify/
+__pycache__/
+*.log

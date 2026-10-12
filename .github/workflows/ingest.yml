@@ -1,0 +1,58 @@
+name: Collecte et évaluation
+
+on:
+  schedule:
+    - cron: "23 4 * * 1"   # chaque lundi matin : les pages officielles changent rarement
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+      - run: pip install -r requirements.txt
+
+      - name: Collecter les pages officielles
+        run: |
+          set -o pipefail
+          python ingest/crawl.py 2>&1 | tee crawl.log || { echo "::error title=crawl::$(tail -c 2500 crawl.log | tr '\n' ' ')"; exit 1; }
+          echo "::notice title=crawl::$(grep -E 'pages gardées|Total' crawl.log | tr '\n' ' ')"
+
+      - name: Découper en passages
+        run: |
+          python ingest/chunk.py | tee chunk.log
+          echo "::notice title=chunk::$(cat chunk.log)"
+
+      - name: Évaluer la recherche
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          node eval/run.mjs | tee eval.log
+          echo "::notice title=eval::$(grep -E '^\|' eval.log | tr '\n' ' ')"
+
+      - name: Garder une copie du corpus complet
+        uses: actions/upload-artifact@v4
+        with:
+          name: corpus
+          path: corpus/pages.jsonl
+          retention-days: 30
+
+      - name: Publier
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add netlify/functions/data/chunks.json eval/results.json eval/RESULTS.md site/eval.json
+          git diff --cached --quiet && echo "Rien de nouveau" && exit 0
+          git commit -m "Corpus et évaluation du $(date -u +%F)"
+          git push

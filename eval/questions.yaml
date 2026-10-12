@@ -1,0 +1,85 @@
+# Jeu d'évaluation : questions réelles de nouveaux arrivants et de frontaliers.
+# "expect" : au moins un passage retrouvé doit venir d'une page dont l'adresse
+# ou le titre contient l'un de ces mots (sans accents). C'est ce qui permet de
+# mesurer si la recherche trouve la bonne page, indépendamment du LLM.
+
+- q: Je viens d'arriver à Genève avec un permis B, je dois m'annoncer où et dans quel délai ?
+  expect: [annonc, arrivee, arriver, ocpm, controle des habitants, demenag]
+- q: Combien de temps ai-je pour souscrire une assurance maladie après mon arrivée en Suisse ?
+  expect: [assurance maladie, assurance-maladie, krankenversicherung, lamal, caisse]
+- q: Est-ce que l'assurance maladie est obligatoire pour un frontalier ?
+  expect: [assurance maladie, frontalier, krankenversicherung, droit d option, lamal]
+- q: Comment fonctionne l'impôt à la source pour un salarié étranger ?
+  expect: [impot a la source, impot-source, source]
+- q: Je suis permis B, est-ce que je peux demander une taxation ordinaire ?
+  expect: [taxation ordinaire, impot a la source, source, declaration]
+- q: Comment obtenir un permis G de frontalier pour travailler à Genève ?
+  expect: [frontalier, permis g]
+- q: Quelle est la différence entre un permis B et un permis C ?
+  expect: [permis, autorisation, sejour, etablissement, aufenthalt]
+- q: Au bout de combien de temps peut-on obtenir un permis C ?
+  expect: [etablissement, permis c, permis]
+- q: Je suis citoyen de l'Union européenne, ai-je besoin d'un permis pour travailler en Suisse ?
+  expect: [fza, libre circulation, ue, aele, permis, etranger]
+- q: Dois-je échanger mon permis de conduire français contre un permis suisse ?
+  expect: [permis de conduire, conduire, permis-conduire, echange]
+- q: Comment immatriculer ma voiture française en Suisse ?
+  expect: [vehicule, immatricul, plaque, voiture, import]
+- q: Qu'est-ce que l'AVS et est-ce que je dois cotiser ?
+  expect: [avs, ahv, vieillesse, cotisation]
+- q: C'est quoi le deuxième pilier ?
+  expect: [prevoyance, pilier, lpp, pension]
+- q: Est-ce que je peux ouvrir un troisième pilier en tant qu'étranger ?
+  expect: [pilier, prevoyance, 3a]
+- q: Comment trouver un appartement et qu'est-ce qu'une garantie de loyer ?
+  expect: [loyer, bail, logement, location, garantie]
+- q: Mon propriétaire peut-il augmenter le loyer comme il veut ?
+  expect: [loyer, bail, logement, augmentation]
+- q: Qu'est-ce que la redevance Serafe et dois-je la payer ?
+  expect: [redevance, serafe, radio]
+- q: J'ai perdu mon emploi, ai-je droit au chômage en Suisse ?
+  expect: [chomage, emploi, perte]
+- q: Comment s'inscrire à l'ORP quand on cherche du travail ?
+  expect: [chomage, orp, emploi, demandeur]
+- q: Ai-je droit aux allocations familiales pour mon enfant ?
+  expect: [allocation, famille, enfant]
+- q: Comment obtenir une réduction de primes d'assurance maladie ?
+  expect: [subside, reduction, prime, assurance maladie]
+- q: Quel est le salaire minimum à Genève ?
+  expect: [salaire minimum, salaire, minimum]
+- q: Combien de jours de vacances ai-je droit en Suisse ?
+  expect: [vacances, conge, travail]
+- q: Combien d'heures par semaine peut-on travailler au maximum ?
+  expect: [duree du travail, heures, travail]
+- q: Que faire si je déménage dans un autre canton ?
+  expect: [demenag, annonc, changement d adresse, adresse]
+- q: Comment inscrire mon enfant à l'école à Genève ?
+  expect: [ecole, scolar, enfant, inscription]
+- q: Est-ce qu'un frontalier paie ses impôts en Suisse ou en France ?
+  expect: [frontalier, impot a la source, source, double imposition]
+- q: Comment demander la naturalisation suisse ?
+  expect: [naturalisation, citoyennete, nationalite]
+- q: Quels documents dois-je avoir sur moi en tant que résident étranger ?
+  expect: [permis, autorisation, titre de sejour, carte, document]
+- q: Mon permis B arrive à expiration, comment le renouveler ?
+  expect: [renouvel, prolong, permis, autorisation]
+- q: Peut-on être assuré dans son pays d'origine au lieu de la LAMal ?
+  expect: [assurance maladie, exempt, dispense, krankenversicherung, droit d option]
+- q: Comment fonctionne la franchise de l'assurance maladie ?
+  expect: [franchise, assurance maladie, quote-part, krankenversicherung]
+- q: Mon conjoint peut-il me rejoindre en Suisse ?
+  expect: [regroupement familial, famille, conjoint, partenaire]
+- q: Comment déclarer la naissance de mon enfant ?
+  expect: [naissance, etat civil, enfant]
+- q: Je veux me marier en Suisse, quelles démarches ?
+  expect: [mariage, etat civil, partenariat]
+- q: Comment payer moins d'impôts avec un 3e pilier ?
+  expect: [pilier, deduction, prevoyance, impot]
+- q: Faut-il une vignette autoroutière ?
+  expect: [vignette, autoroute, route]
+- q: Est-ce que je peux travailler pendant ma recherche d'emploi avec un permis L ?
+  expect: [courte duree, permis l, autorisation, sejour]
+- q: Comment résilier mon bail ?
+  expect: [resili, bail, logement]
+- q: Qu'est-ce qu'un extrait du registre des poursuites et pourquoi le demande-t-on ?
+  expect: [poursuite, extrait, registre]

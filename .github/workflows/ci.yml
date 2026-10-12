@@ -1,0 +1,16 @@
+name: Tests
+
+on:
+  push:
+    paths-ignore: ["netlify/functions/data/**", "eval/results.json", "eval/RESULTS.md", "site/eval.json"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+      - run: node --test tests/*.test.mjs
