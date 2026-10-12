@@ -69,6 +69,7 @@ def sitemap_urls(url: str, session: requests.Session, depth: int = 0) -> list[st
     if r.status_code != 200:
         print(f"  sitemap {url} -> HTTP {r.status_code}")
         return []
+    print(f"  sitemap {url} -> {len(r.text)} octets, type {r.headers.get('content-type', '')[:30]}")
     locs = re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", r.text)
     if "<sitemapindex" in r.text and depth < 2:
         out = []
@@ -98,7 +99,7 @@ def crawl_site(site: dict, cfg: dict, session: requests.Session) -> list[dict]:
         found = [u for u in found if urlparse(u).netloc == domain and not excluded(u, cfg)
                  and any(urlparse(u).path.startswith(p) for p in site["allow_prefixes"])
                  and (not site.get("keyword_filter") or relevant(u, "", cfg["keywords"]))]
-        print(f"  sitemap : {len(found)} pages candidates")
+        print(f"  sitemap : {len(found)} pages candidates (exemples : {found[:2]})")
         seeds += found
     queue = deque((u, 0) for u in dict.fromkeys(seeds))
     seen = set(seeds)
@@ -108,6 +109,7 @@ def crawl_site(site: dict, cfg: dict, session: requests.Session) -> list[dict]:
     while queue and len(pages) < site["max_pages"]:
         url, depth = queue.popleft()
         if robots and not robots.can_fetch(cfg["user_agent"], url):
+            status_log["robots.txt"] = status_log.get("robots.txt", 0) + 1
             continue
         try:
             r = session.get(url, timeout=30)
@@ -123,6 +125,8 @@ def crawl_site(site: dict, cfg: dict, session: requests.Session) -> list[dict]:
         text = trafilatura.extract(html, include_tables=True, include_comments=False, favor_precision=True)
         meta = trafilatura.extract_metadata(html)
         title = (meta.title if meta and meta.title else url).split(" | ")[0].split(" - ch.ch")[0].strip()
+        if not text or len(text) <= 300:
+            status_log["texte trop court"] = status_log.get("texte trop court", 0) + 1
         if text and len(text) > 300 and not excluded(r.url, cfg):
             pages.append({
                 "url": r.url, "domain": domain, "site": site["name"], "title": title, "text": text,

@@ -27,7 +27,7 @@ jobs:
         run: |
           set -o pipefail
           python ingest/crawl.py 2>&1 | tee crawl.log || { echo "::error title=crawl::$(tail -c 2500 crawl.log | tr '\n' ' ')"; exit 1; }
-          echo "::notice title=crawl::$(grep -E 'pages gardées|Total' crawl.log | tr '\n' ' ')"
+          echo "::notice title=crawl::$(grep -E 'pages gardées|Total|sitemap' crawl.log | cut -c1-300 | tr '\n' ' ')"
 
       - name: Découper en passages
         run: |
