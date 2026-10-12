@@ -78,6 +78,11 @@ def sitemap_urls(url: str, session: requests.Session, depth: int = 0) -> list[st
     return locs
 
 
+def excluded(url: str, cfg: dict) -> bool:
+    u = url.lower()
+    return any(p in u for p in cfg.get("exclude_patterns", []))
+
+
 def crawl_site(site: dict, cfg: dict, session: requests.Session) -> list[dict]:
     domain = site["domain"]
     robots = urllib.robotparser.RobotFileParser()
@@ -90,7 +95,7 @@ def crawl_site(site: dict, cfg: dict, session: requests.Session) -> list[dict]:
     seeds = list(site.get("seeds", []))
     if site.get("sitemap"):
         found = [u.split("?")[0] for u in sitemap_urls(site["sitemap"], session)]
-        found = [u for u in found if urlparse(u).netloc == domain
+        found = [u for u in found if urlparse(u).netloc == domain and not excluded(u, cfg)
                  and any(urlparse(u).path.startswith(p) for p in site["allow_prefixes"])
                  and (not site.get("keyword_filter") or relevant(u, "", cfg["keywords"]))]
         print(f"  sitemap : {len(found)} pages candidates")
@@ -118,7 +123,7 @@ def crawl_site(site: dict, cfg: dict, session: requests.Session) -> list[dict]:
         text = trafilatura.extract(html, include_tables=True, include_comments=False, favor_precision=True)
         meta = trafilatura.extract_metadata(html)
         title = (meta.title if meta and meta.title else url).split(" | ")[0].split(" - ch.ch")[0].strip()
-        if text and len(text) > 300:
+        if text and len(text) > 300 and not excluded(r.url, cfg):
             pages.append({
                 "url": r.url, "domain": domain, "site": site["name"], "title": title, "text": text,
                 "fetched_at": datetime.now(timezone.utc).date().isoformat(),
@@ -135,7 +140,7 @@ def crawl_site(site: dict, cfg: dict, session: requests.Session) -> list[dict]:
                 continue
             link = urldefrag(urljoin(r.url, href))[0].split("?")[0]
             p = urlparse(link)
-            if p.netloc != domain or SKIP_EXT.search(p.path) or link in seen:
+            if p.netloc != domain or SKIP_EXT.search(p.path) or link in seen or excluded(link, cfg):
                 continue
             if not any(p.path.startswith(pre) for pre in site["allow_prefixes"]):
                 continue

@@ -6,6 +6,20 @@ user_agent: "assistant-rag-suisse/1.0 (+https://github.com/Toumil94/assistant-ra
 delay_seconds: 1.0        # politesse : une requête par seconde et par site
 max_depth: 2
 
+# Pages exclues : offres d'emploi de l'administration, communiqués de presse,
+# lettres d'information. Elles contiennent les mots-clés mais pas d'information
+# utile à un nouvel arrivant.
+exclude_patterns:
+  - /offres-emploi
+  - /communique
+  - /nsb
+  - newsletter
+  - /actualites
+  - /medienmitteilungen
+  - /news
+  - /agenda
+  - /evenement
+
 sites:
   - name: ch.ch (portail officiel de la Confédération)
     domain: www.ch.ch
