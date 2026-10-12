@@ -1,9 +1,10 @@
 {
   "evaluated_at": "2026-10-12",
   "corpus": {
-    "n_pages": 282,
-    "n_chunks": 1227,
+    "n_pages": 327,
+    "n_chunks": 1161,
     "sites": [
+      "OFSP (assurance maladie)",
       "SEM (Secrétariat d'État aux migrations)",
       "ch.ch (portail officiel de la Confédération)",
       "ge.ch (État de Genève)"
@@ -14,9 +15,9 @@
     {
       "config": "BM25 seul",
       "n": 40,
-      "hit_at_1": 0.45,
-      "recall_at_5": 0.625,
-      "mrr_at_10": 0.5328075396825397,
+      "hit_at_1": 0.475,
+      "recall_at_5": 0.7,
+      "mrr_at_10": 0.5829464285714285,
       "misses": [
         "Dois-je échanger mon permis de conduire français contre un permis suisse ?",
         "C'est quoi le deuxième pilier ?",
@@ -25,21 +26,19 @@
         "Mon propriétaire peut-il augmenter le loyer comme il veut ?",
         "Qu'est-ce que la redevance Serafe et dois-je la payer ?",
         "Faut-il une vignette autoroutière ?",
-        "Comment résilier mon bail ?",
-        "Qu'est-ce qu'un extrait du registre des poursuites et pourquoi le demande-t-on ?"
+        "Comment résilier mon bail ?"
       ]
     },
     {
       "config": "BM25 + synonymes métier",
       "n": 40,
-      "hit_at_1": 0.55,
-      "recall_at_5": 0.75,
-      "mrr_at_10": 0.6522023809523809,
+      "hit_at_1": 0.575,
+      "recall_at_5": 0.9,
+      "mrr_at_10": 0.7045833333333333,
       "misses": [
         "C'est quoi le deuxième pilier ?",
         "Qu'est-ce que la redevance Serafe et dois-je la payer ?",
-        "Faut-il une vignette autoroutière ?",
-        "Qu'est-ce qu'un extrait du registre des poursuites et pourquoi le demande-t-on ?"
+        "Faut-il une vignette autoroutière ?"
       ]
     }
   ]
