@@ -60,6 +60,24 @@ def relevant(url: str, anchor: str, keywords: list[str]) -> bool:
     return any(t.startswith(k) for t in tokens if t for k in keywords)
 
 
+def sitemap_urls(url: str, session: requests.Session, depth: int = 0) -> list[str]:
+    """Lit un sitemap XML (ou un index de sitemaps) et renvoie les adresses des pages."""
+    try:
+        r = session.get(url, timeout=60)
+    except requests.RequestException:
+        return []
+    if r.status_code != 200:
+        print(f"  sitemap {url} -> HTTP {r.status_code}")
+        return []
+    locs = re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", r.text)
+    if "<sitemapindex" in r.text and depth < 2:
+        out = []
+        for sm in locs:
+            out.extend(sitemap_urls(sm, session, depth + 1))
+        return out
+    return locs
+
+
 def crawl_site(site: dict, cfg: dict, session: requests.Session) -> list[dict]:
     domain = site["domain"]
     robots = urllib.robotparser.RobotFileParser()
@@ -69,8 +87,17 @@ def crawl_site(site: dict, cfg: dict, session: requests.Session) -> list[dict]:
     except Exception:  # noqa: BLE001  pas de robots.txt lisible : on reste prudent mais on continue
         robots = None
 
-    queue = deque((u, 0) for u in site["seeds"])
-    seen = set(site["seeds"])
+    seeds = list(site.get("seeds", []))
+    if site.get("sitemap"):
+        found = [u.split("?")[0] for u in sitemap_urls(site["sitemap"], session)]
+        found = [u for u in found if urlparse(u).netloc == domain
+                 and any(urlparse(u).path.startswith(p) for p in site["allow_prefixes"])
+                 and (not site.get("keyword_filter") or relevant(u, "", cfg["keywords"]))]
+        print(f"  sitemap : {len(found)} pages candidates")
+        seeds += found
+    queue = deque((u, 0) for u in dict.fromkeys(seeds))
+    seen = set(seeds)
+    status_log: dict = {}
     pages = []
     errors = 0
     while queue and len(pages) < site["max_pages"]:
@@ -84,6 +111,8 @@ def crawl_site(site: dict, cfg: dict, session: requests.Session) -> list[dict]:
             errors += 1
             continue
         if r.status_code != 200 or "text/html" not in r.headers.get("content-type", ""):
+            key = f"{r.status_code} {r.headers.get('content-type', '')[:20]}"
+            status_log[key] = status_log.get(key, 0) + 1
             continue
         html = r.text
         text = trafilatura.extract(html, include_tables=True, include_comments=False, favor_precision=True)
@@ -114,7 +143,8 @@ def crawl_site(site: dict, cfg: dict, session: requests.Session) -> list[dict]:
                 continue
             seen.add(link)
             queue.append((link, depth + 1))
-    print(f"{site['name']}: {len(pages)} pages gardées, {len(seen)} liens vus, {errors} erreurs réseau")
+    rejected = ", ".join(f"{k} x{v}" for k, v in status_log.items()) or "aucune"
+    print(f"{site['name']}: {len(pages)} pages gardées, {len(seen)} liens vus, {errors} erreurs réseau, réponses rejetées : {rejected}")
     return pages
 
 

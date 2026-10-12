@@ -10,8 +10,9 @@ sites:
   - name: ch.ch (portail officiel de la Confédération)
     domain: www.ch.ch
     allow_prefixes: ["/fr/"]
-    keyword_filter: false     # tout le portail concerne la vie quotidienne en Suisse
-    max_pages: 350
+    keyword_filter: true      # le sitemap contient tout le portail : on garde les thèmes utiles aux nouveaux arrivants
+    sitemap: https://www.ch.ch/sitemap.xml
+    max_pages: 400
     seeds:
       - https://www.ch.ch/fr/
       - https://www.ch.ch/fr/documents-et-registre/
@@ -49,8 +50,9 @@ sites:
 
   - name: OFSP (assurance maladie)
     domain: www.bag.admin.ch
-    allow_prefixes: ["/bag/fr/"]
+    allow_prefixes: ["/bag/fr/", "/fr/"]
     keyword_filter: true
+    sitemap: https://www.bag.admin.ch/sitemap.xml
     max_pages: 60
     seeds:
       - https://www.bag.admin.ch/bag/fr/home/versicherungen/krankenversicherung.html
@@ -61,7 +63,13 @@ sites:
     keyword_filter: true
     max_pages: 60
     seeds:
-      - https://www.ahv-iv.ch/fr/
+      - https://www.ahv-iv.ch/fr
+      - https://www.ahv-iv.ch/fr/Mémentos/Généralités
+      - https://www.ahv-iv.ch/fr/Mémentos/Cotisations-AVS-AI-APG-AC
+      - https://www.ahv-iv.ch/fr/Mémentos/International
+      - https://www.ahv-iv.ch/fr/Mémentos/Allocations-familiales
+      - https://www.ahv-iv.ch/fr/Assurances-sociales/Assurance-vieillesse-et-survivants-AVS/Généralités
+      - https://www.ahv-iv.ch/fr/Assurances-sociales/Assurance-vieillesse-et-survivants-AVS/Cotisations
 
 # Un lien n'est suivi (sur les sites avec keyword_filter) que si son adresse
 # ou son texte contient l'un de ces mots, sans accents.
@@ -101,6 +109,14 @@ keywords:
   - allocation
   - naturalisation
   - residence
+  - mariage
+  - naissance
+  - ecole
+  - vacances
+  - redevance
+  - poursuite
+  - vignette
+  - resili
   - aufenthalt
   - krankenversicherung
   - fza

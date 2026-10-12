@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nouveau en Suisse ? | Assistant des démarches</title>
+<meta name="description" content="Posez vos questions sur les démarches en Suisse (permis, impôt à la source, assurance maladie, frontaliers). Réponses tirées des pages officielles, avec leurs sources.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23D52B1E'/%3E%3Cpath d='M13 7h6v6h6v6h-6v6h-6v-6H7v-6h6z' fill='white'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F3F4F1;--surface:#fff;--ink:#16191D;--slate:#59626D;--rule:#D6D9D3;--red:#D52B1E;--board:#1C2431;--amber:#FFD84D;--blue:#2a78d6;--gut:clamp(16px,4vw,48px)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:'Archivo',system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}button,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto;padding:0 var(--gut)}
+.top{background:var(--board);color:#F1F1E8}
+.top .wrap{max-width:1180px;display:flex;justify-content:space-between;align-items:center;height:56px;font-size:14px}
+.brand{display:flex;gap:10px;align-items:center;font-weight:700;text-decoration:none}
+.brand i{width:20px;height:20px;background:var(--red);position:relative}
+.brand i::before,.brand i::after{content:"";position:absolute;background:#fff}
+.brand i::before{left:8px;top:4px;width:4px;height:12px}.brand i::after{left:4px;top:8px;width:12px;height:4px}
+.top nav{display:flex;gap:18px}.top nav a{text-decoration:none;color:#C9CED6}.top nav a:hover{color:var(--amber)}
+
+.hero{padding:clamp(36px,6vw,72px) 0 20px}
+.hero h1{font-stretch:115%;font-weight:850;font-size:clamp(38px,6.4vw,72px);line-height:1;letter-spacing:-.03em;max-width:13ch}
+.hero p{font-size:19px;color:var(--slate);max-width:56ch;margin-top:16px}
+.hero p b{color:var(--ink);font-weight:650}
+
+/* zone de question */
+.ask{background:var(--surface);border:2px solid var(--ink);margin-top:26px;display:flex;align-items:flex-end;gap:10px;padding:10px 10px 10px 16px}
+.ask textarea{flex:1;border:0;resize:none;background:transparent;font-size:18px;line-height:1.45;padding:6px 0;min-height:30px;max-height:180px;outline:none}
+.ask button{background:var(--red);color:#fff;border:0;padding:12px 20px;font-weight:700;cursor:pointer;white-space:nowrap}
+.ask button:disabled{background:var(--slate);cursor:default}
+.count{font-size:13px;color:var(--slate);text-align:right;margin-top:6px;min-height:18px}
+.themes{margin-top:18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.theme{background:var(--surface);border:1px solid var(--rule);padding:12px 14px}
+.theme b{display:block;font-size:14px;color:var(--slate);font-weight:600;margin-bottom:6px}
+.theme button{display:block;text-align:left;background:none;border:0;padding:4px 0;font-size:15px;cursor:pointer;line-height:1.35}
+.theme button:hover{color:var(--red)}
+.theme button::before{content:"› ";color:var(--red);font-weight:700}
+
+/* réponse */
+#thread{margin:28px 0 8px;display:flex;flex-direction:column;gap:22px}
+.turn .qq{font-weight:700;font-size:19px;margin-bottom:10px;display:flex;gap:10px}
+.turn .qq::before{content:"Q";flex:none;width:28px;height:28px;background:var(--ink);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:14px}
+.card{background:var(--surface);border:1px solid var(--rule);border-left:6px solid var(--red);padding:20px 22px}
+.answer p{margin:0 0 10px}.answer ul,.answer ol{margin:0 0 10px 22px}.answer li{margin:4px 0}
+.answer strong{font-weight:650}
+.cite{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;margin:0 1px;background:var(--ink);color:#fff;font-size:12px;font-weight:700;text-decoration:none;vertical-align:2px;border-radius:2px}
+.cite:hover{background:var(--red)}
+.steps{display:flex;flex-direction:column;gap:6px;color:var(--slate);font-size:15px}
+.steps span{display:flex;align-items:center;gap:8px}
+.steps span::before{content:"";width:10px;height:10px;border-radius:50%;border:2px solid var(--rule)}
+.steps span.on::before{border-color:var(--red);border-top-color:transparent;animation:spin .8s linear infinite}
+.steps span.ok::before{background:var(--ink);border-color:var(--ink)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.err{border-left-color:var(--amber)}
+.srcs{margin-top:16px;border-top:1px solid var(--rule);padding-top:12px}
+.srcs h3{font-size:14px;color:var(--slate);font-weight:600;margin-bottom:8px}
+.src{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid #EEF0EC;scroll-margin-top:80px}
+.src .n{width:24px;height:24px;background:var(--paper);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.src.cited .n{background:var(--ink);color:#fff;border-color:var(--ink)}
+.src a{font-weight:600;font-size:15px}
+.src small{display:block;color:var(--slate);font-size:13px}
+.src details{font-size:14px;color:var(--slate);margin-top:4px}
+.src details summary{cursor:pointer}
+.src.flash{background:#FFF7D6}
+.meta-line{font-size:13px;color:var(--slate);margin-top:10px}
+.disclaimer{font-size:14px;color:var(--slate);border-top:1px solid var(--rule);padding:14px 0 0;margin-top:10px}
+
+/* comment ça marche */
+section.how{margin-top:56px;padding:40px 0 56px;border-top:2px solid var(--ink)}
+.how h2{font-stretch:112%;font-weight:800;font-size:clamp(28px,4vw,40px);line-height:1.1;margin-bottom:10px}
+.how>.wrap>p{color:var(--slate);max-width:62ch;margin-bottom:22px}
+.pipe{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));counter-reset:s}
+.pipe li{padding:14px 14px 14px 0;border-top:6px solid var(--ink);counter-increment:s}
+.pipe li+li{padding-left:14px;border-left:1px solid var(--rule)}
+.pipe li::before{content:counter(s);display:block;font-stretch:118%;font-weight:850;font-size:26px;color:var(--red);line-height:1;margin-bottom:6px}
+.pipe b{display:block;font-size:16px}.pipe span{font-size:14px;color:var(--slate);display:block;margin-top:4px}
+.evalt{width:100%;border-collapse:collapse;margin-top:28px;font-variant-numeric:tabular-nums;background:var(--surface)}
+.evalt th,.evalt td{padding:10px 12px;border-bottom:1px solid var(--rule);text-align:right;font-size:15px}
+.evalt th{border-bottom:2px solid var(--ink);font-size:13px;color:var(--slate);font-weight:600}
+.evalt th:first-child,.evalt td:first-child{text-align:left}
+.evalt tr:last-child td{font-weight:700}
+.evalnote{font-size:14px;color:var(--slate);margin-top:10px}
+footer{border-top:1px solid var(--rule);padding:22px 0 40px;font-size:14px;color:var(--slate)}
+footer .wrap{max-width:1180px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+@media (max-width:760px){.themes,.pipe{grid-template-columns:1fr}.pipe li,.pipe li+li{padding-left:0;border-left:0}.top nav{display:none}.ask{flex-direction:column;align-items:stretch}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="https://toumilyes.netlify.app"><i aria-hidden="true"></i>Lyes Toumi</a>
+  <nav><a href="#comment">Comment ça marche</a><a href="https://github.com/Toumil94/assistant-rag-suisse" target="_blank" rel="noopener">GitHub</a><a href="https://toumilyes.netlify.app">Portfolio</a></nav>
+</div></header>
+
+<main>
+<div class="wrap">
+  <section class="hero">
+    <h1>Nouveau en Suisse ? Posez votre question.</h1>
+    <p>Permis, impôt à la source, assurance maladie, frontaliers, voiture, logement : l'assistant répond à partir des <b id="npages">pages officielles</b> de ch.ch, ge.ch et de la Confédération, et cite chaque source.</p>
+    <form class="ask" id="form">
+      <textarea id="q" rows="1" maxlength="600" placeholder="Par exemple : je viens d'arriver à Genève avec un permis B, que dois-je faire ?" aria-label="Votre question"></textarea>
+      <button type="submit" id="go">Demander</button>
+    </form>
+    <div class="count" id="count"></div>
+    <div class="themes" id="themes"></div>
+  </section>
+
+  <div id="thread" aria-live="polite"></div>
+  <p class="disclaimer">Informations générales tirées des sites officiels, pas un conseil juridique. Votre situation peut dépendre du canton, de votre nationalité et de votre permis : vérifiez auprès de l'office concerné avant de décider.</p>
+</div>
+
+<section class="how" id="comment"><div class="wrap">
+  <h2>Comment ça marche</h2>
+  <p>Un système RAG (Retrieval-Augmented Generation) : l'IA ne répond pas de mémoire, elle s'appuie sur des passages retrouvés dans les pages officielles et doit les citer.</p>
+  <ol class="pipe">
+    <li><b>Collecte</b><span>Chaque semaine, GitHub Actions parcourt ch.ch, ge.ch, le SEM, l'OFSP et l'AVS, en respectant robots.txt.</span></li>
+    <li><b>Découpage</b><span>Le texte utile de chaque page est découpé en passages d'environ 900 caractères, avec leur source.</span></li>
+    <li><b>Recherche</b><span>Claude reformule la question en vocabulaire administratif suisse, puis une recherche BM25 enrichie de synonymes métier trouve les meilleurs passages.</span></li>
+    <li><b>Réponse</b><span>Claude répond uniquement à partir de ces passages, en citant chaque information. Sans source, il le dit.</span></li>
+  </ol>
+  <div id="evalbox"></div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <span>Projet open source de <a href="https://toumilyes.netlify.app">Lyes Toumi</a>, Data &amp; AI Engineer à Genève. Non affilié aux autorités suisses.</span>
+  <span><a href="https://github.com/Toumil94/assistant-rag-suisse" target="_blank" rel="noopener">Code source</a></span>
+</div></footer>
+
+<script>
+(function(){
+  var THEMES=[
+    {t:'Arriver et s\'installer',q:['Je viens d\'arriver à Genève avec un permis B, que dois-je faire ?','Quelle est la différence entre un permis B et un permis C ?']},
+    {t:'Frontaliers',q:['Comment obtenir un permis G pour travailler à Genève ?','Est-ce qu\'un frontalier paie ses impôts en Suisse ou en France ?']},
+    {t:'Impôts et prévoyance',q:['Comment fonctionne l\'impôt à la source ?','C\'est quoi le deuxième pilier ?']},
+    {t:'Assurance maladie',q:['Combien de temps ai-je pour m\'assurer après mon arrivée ?','Comment obtenir une réduction de primes ?']},
+    {t:'Voiture',q:['Dois-je échanger mon permis de conduire français ?','Comment immatriculer ma voiture française en Suisse ?']},
+    {t:'Travail et logement',q:['Ai-je droit au chômage si je perds mon emploi ?','Qu\'est-ce qu\'une garantie de loyer ?']}
+  ];
+  var q=document.getElementById('q'),form=document.getElementById('form'),go=document.getElementById('go'),thread=document.getElementById('thread'),count=document.getElementById('count');
+  var themes=document.getElementById('themes');
+  themes.innerHTML=THEMES.map(function(t){return '<div class="theme"><b>'+t.t+'</b>'+t.q.map(function(x){return '<button type="button">'+esc(x)+'</button>';}).join('')+'</div>';}).join('');
+  themes.addEventListener('click',function(e){if(e.target.tagName==='BUTTON'){q.value=e.target.textContent;ask();}});
+  q.addEventListener('input',function(){q.style.height='auto';q.style.height=Math.min(q.scrollHeight,180)+'px';count.textContent=q.value.length>450?q.value.length+' / 600':'';});
+  q.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ask();}});
+  form.addEventListener('submit',function(e){e.preventDefault();ask();});
+
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  // Rendu minimal du texte de réponse : paragraphes, listes, gras, et numéros de source cliquables.
+  function render(text,id){
+    var lines=esc(text).split('\n'),html='',list=null;
+    lines.forEach(function(l){
+      var m=l.match(/^\s*(?:[-*•]|\d+[.)])\s+(.*)$/);
+      if(m){var tag=/^\s*\d/.test(l)?'ol':'ul';if(list!==tag){if(list)html+='</'+list+'>';html+='<'+tag+'>';list=tag;}html+='<li>'+m[1]+'</li>';return;}
+      if(list){html+='</'+list+'>';list=null;}
+      if(l.trim())html+='<p>'+l+'</p>';
+    });
+    if(list)html+='</'+list+'>';
+    return html.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\[(\d+)\]/g,'<a class="cite" href="#s-'+id+'-$1" data-n="$1">$1</a>');
+  }
+
+  var busy=false,turnN=0;
+  function ask(){
+    var text=q.value.trim();
+    if(busy)return;
+    if(text.length<5){count.textContent='Écrivez une question un peu plus détaillée.';return;}
+    busy=true;go.disabled=true;go.textContent='…';
+    var id=++turnN,turn=document.createElement('div');turn.className='turn';
+    turn.innerHTML='<div class="qq">'+esc(text)+'</div><div class="card"><div class="steps"><span class="on">Reformulation de la question</span><span>Recherche dans les pages officielles</span><span>Rédaction de la réponse avec sources</span></div></div>';
+    thread.prepend(turn);turn.scrollIntoView({behavior:'smooth',block:'start'});
+    var steps=turn.querySelectorAll('.steps span'),k=0;
+    var timer=setInterval(function(){if(k<2){steps[k].className='ok';k++;steps[k].className='on';}},1600);
+    fetch('/api/ask',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:text})})
+      .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+      .then(function(res){
+        clearInterval(timer);
+        var card=turn.querySelector('.card');
+        if(!res.ok||res.j.error){card.classList.add('err');card.innerHTML='<p>'+esc(res.j.error||'Une erreur est survenue.')+'</p>';return;}
+        var j=res.j;
+        var srcs=j.sources.map(function(s){return '<div class="src'+(s.cited?' cited':'')+'" id="s-'+id+'-'+s.n+'"><span class="n">'+s.n+'</span><div><a href="'+esc(s.url)+'" target="_blank" rel="noopener">'+esc(s.title)+'</a><small>'+esc(s.site)+'</small><details><summary>Extrait utilisé</summary>'+esc(s.excerpt)+'…</details></div></div>';}).join('');
+        card.innerHTML='<div class="answer">'+render(j.answer,id)+'</div>'+(srcs?'<div class="srcs"><h3>Sources officielles</h3>'+srcs+'</div>':'')+
+          '<p class="meta-line">Recherche avec : '+j.queries.slice(1).map(function(x){return '« '+esc(x)+' »';}).join(', ')+(j.timings&&j.timings.total_ms?' · '+(j.timings.total_ms/1000).toFixed(1).replace('.',',')+' s':'')+'</p>';
+        card.querySelectorAll('.cite').forEach(function(a){a.addEventListener('click',function(){var t=document.getElementById(a.getAttribute('href').slice(1));if(t){t.classList.add('flash');setTimeout(function(){t.classList.remove('flash');},1400);}});});
+        q.value='';q.style.height='auto';
+      })
+      .catch(function(){clearInterval(timer);var card=turn.querySelector('.card');card.classList.add('err');card.innerHTML='<p>Impossible de joindre l\'assistant. Vérifiez votre connexion et réessayez.</p>';})
+      .finally(function(){busy=false;go.disabled=false;go.textContent='Demander';});
+  }
+
+  fetch('eval.json',{cache:'no-store'}).then(function(r){return r.json();}).then(function(e){
+    if(!e.results)return;
+    document.getElementById('npages').textContent=e.corpus.n_pages+' pages officielles';
+    var pct=function(x){return Math.round(x*100)+' %';};
+    document.getElementById('evalbox').innerHTML='<table class="evalt"><thead><tr><th>Configuration de recherche</th><th>Bonne page en 1<sup>re</sup> position</th><th>Bonne page dans le top 5</th></tr></thead><tbody>'+
+      e.results.map(function(r){return '<tr><td>'+esc(r.config)+'</td><td>'+pct(r.hit_at_1)+'</td><td>'+pct(r.recall_at_5)+'</td></tr>';}).join('')+'</tbody></table>'+
+      '<p class="evalnote">Mesuré sur '+e.results[0].n+' questions réelles de nouveaux arrivants, le '+new Date(e.evaluated_at).toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'})+'. Corpus : '+e.corpus.n_pages+' pages, '+e.corpus.n_chunks+' passages.</p>';
+  }).catch(function(){});
+})();
+</script>
+</body>
+</html>
