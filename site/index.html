@@ -119,7 +119,7 @@ footer .wrap{max-width:1180px;display:flex;justify-content:space-between;gap:16p
   <h2>Comment ça marche</h2>
   <p>Un système RAG (Retrieval-Augmented Generation) : l'IA ne répond pas de mémoire, elle s'appuie sur des passages retrouvés dans les pages officielles et doit les citer.</p>
   <ol class="pipe">
-    <li><b>Collecte</b><span>Chaque semaine, GitHub Actions parcourt ch.ch, ge.ch, le SEM, l'OFSP et l'AVS, en respectant robots.txt.</span></li>
+    <li><b>Collecte</b><span>Chaque semaine, GitHub Actions parcourt ch.ch, ge.ch, le SEM et l'OFSP, en respectant robots.txt.</span></li>
     <li><b>Découpage</b><span>Le texte utile de chaque page est découpé en passages d'environ 900 caractères, avec leur source.</span></li>
     <li><b>Recherche</b><span>Claude reformule la question en vocabulaire administratif suisse, puis une recherche BM25 enrichie de synonymes métier trouve les meilleurs passages.</span></li>
     <li><b>Réponse</b><span>Claude répond uniquement à partir de ces passages, en citant chaque information. Sans source, il le dit.</span></li>

@@ -43,7 +43,7 @@ sites:
     domain: www.ge.ch
     allow_prefixes: ["/"]
     keyword_filter: true
-    max_pages: 220
+    max_pages: 320
     seeds:
       - https://www.ge.ch/
       - https://www.ge.ch/demander-permis-travail-frontalier
@@ -66,24 +66,13 @@ sites:
     domain: www.bag.admin.ch
     allow_prefixes: ["/bag/fr/", "/fr/"]
     keyword_filter: true
-    sitemap: https://www.bag.admin.ch/sitemap.xml
-    max_pages: 60
+    sitemap: https://www.bag.admin.ch/sitemap/fr.xml
+    max_pages: 120
     seeds:
       - https://www.bag.admin.ch/bag/fr/home/versicherungen/krankenversicherung.html
 
-  - name: AVS / AI
-    domain: www.ahv-iv.ch
-    allow_prefixes: ["/fr/", "/p/"]
-    keyword_filter: true
-    max_pages: 60
-    seeds:
-      - https://www.ahv-iv.ch/fr
-      - https://www.ahv-iv.ch/fr/Mémentos/Généralités
-      - https://www.ahv-iv.ch/fr/Mémentos/Cotisations-AVS-AI-APG-AC
-      - https://www.ahv-iv.ch/fr/Mémentos/International
-      - https://www.ahv-iv.ch/fr/Mémentos/Allocations-familiales
-      - https://www.ahv-iv.ch/fr/Assurances-sociales/Assurance-vieillesse-et-survivants-AVS/Généralités
-      - https://www.ahv-iv.ch/fr/Assurances-sociales/Assurance-vieillesse-et-survivants-AVS/Cotisations
+  # L'AVS (ahv-iv.ch) a été retirée : son robots.txt interdit la collecte automatique.
+  # Les informations de base sur l'AVS restent couvertes par ch.ch et ge.ch.
 
 # Un lien n'est suivi (sur les sites avec keyword_filter) que si son adresse
 # ou son texte contient l'un de ces mots, sans accents.

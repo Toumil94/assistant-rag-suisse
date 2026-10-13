@@ -2,7 +2,7 @@
 
 Quand on arrive en Suisse, ou qu'on y travaille comme frontalier, les questions s'enchaînent : où s'annoncer, quand s'assurer, comment fonctionne l'impôt à la source, faut-il échanger son permis de conduire... Les réponses existent, mais elles sont dispersées entre la Confédération, les cantons et les offices.
 
-Cet assistant répond à ces questions **uniquement à partir des pages officielles** (ch.ch, ge.ch, SEM, OFSP, AVS), et **cite chaque source**.
+Cet assistant répond à ces questions **uniquement à partir des pages officielles** (ch.ch, ge.ch, SEM, OFSP), et **cite chaque source**.
 
 **Démo : https://assistant-suisse.netlify.app**
 
@@ -34,6 +34,7 @@ flowchart LR
 
 | Choix | Pourquoi |
 |---|---|
+| **Collecte respectueuse** | robots.txt respecté (le site de l'AVS l'interdit, il a donc été exclu), une requête par seconde, agent identifié. |
 | **Sources officielles uniquement** | Sur l'administratif, une réponse fausse peut coûter cher (amende, délai manqué). Chaque information doit renvoyer à une page d'autorité. |
 | **Recherche lexicale BM25** plutôt qu'un index vectoriel | Le vocabulaire administratif est précis (« permis G », « LAMal », « OCPM ») : la correspondance exacte des termes compte. BM25 tient en mémoire dans une fonction serverless, sans base vectorielle ni coût d'embedding, et chaque résultat est explicable. |
 | **Dictionnaire de synonymes métier** | Les gens disent « frontalier » quand la page dit « permis G », ou « caisse maladie » pour « assurance obligatoire des soins ». Le dictionnaire relie ces vocabulaires. |

@@ -71,6 +71,11 @@ def sitemap_urls(url: str, session: requests.Session, depth: int = 0) -> list[st
         return []
     print(f"  sitemap {url} -> {len(r.text)} octets, type {r.headers.get('content-type', '')[:30]}")
     locs = re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", r.text)
+    if not locs and "html" in r.headers.get("content-type", ""):
+        # Plan du site au format HTML : on récupère ses liens.
+        parser = Links()
+        parser.feed(r.text)
+        locs = [urljoin(r.url, h) for h, _ in parser.links if h]
     if "<sitemapindex" in r.text and depth < 2:
         out = []
         for sm in locs:
