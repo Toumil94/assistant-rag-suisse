@@ -36,7 +36,7 @@ jobs:
 
       - name: Évaluer la recherche
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
           node eval/run.mjs | tee eval.log
           echo "::notice title=eval::$(grep -E '^\|' eval.log | tr '\n' ' ')"

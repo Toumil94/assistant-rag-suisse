@@ -10,7 +10,7 @@ export const SYNONYMS = [
   ["permis b", "autorisation de sejour", "permis de sejour", "titre de sejour"],
   ["permis c", "autorisation d etablissement", "etablissement"],
   ["permis l", "autorisation de courte duree", "courte duree"],
-  ["lamal", "assurance maladie", "assurance-maladie", "caisse maladie", "assurance obligatoire des soins"],
+  ["lamal", "assurance maladie", "assurance-maladie", "caisse maladie", "assurance obligatoire des soins", "m assurer", "s assurer"],
   ["impot a la source", "imposition a la source", "retenue a la source", "bareme"],
   ["tou", "taxation ordinaire ulterieure", "declaration d impot", "taxation ordinaire"],
   ["avs", "assurance vieillesse", "premier pilier", "1er pilier", "cotisations"],

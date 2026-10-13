@@ -3,11 +3,12 @@
 // eval/results.json (lu par le site) et eval/RESULTS.md (lu sur GitHub).
 //
 //   node eval/run.mjs
-//   ANTHROPIC_API_KEY=... node eval/run.mjs   # ajoute la reformulation par LLM
+//   GROQ_API_KEY=... node eval/run.mjs   # ajoute la reformulation par LLM (Groq, gratuit)
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { Retriever, normalize } from "../netlify/functions/lib/retriever.mjs";
 import { REWRITE_PROMPT } from "../netlify/functions/lib/prompts.mjs";
+import { chat, llmAvailable, llmProvider } from "../netlify/functions/lib/llm.mjs";
 
 const data = JSON.parse(readFileSync(new URL("../netlify/functions/data/chunks.json", import.meta.url)));
 const retriever = new Retriever(data.chunks);
@@ -33,23 +34,21 @@ function fuse(lists, k) {
 }
 
 async function rewrite(q) {
-  const r = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "content-type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
-    body: JSON.stringify({ model: process.env.CLAUDE_MODEL || "claude-haiku-5-5", max_tokens: 200, system: REWRITE_PROMPT, messages: [{ role: "user", content: q }] }),
-  });
-  const j = await r.json();
-  const raw = (j.content || []).map((b) => b.text || "").join("");
-  try { return JSON.parse(raw.slice(raw.indexOf("{"), raw.lastIndexOf("}") + 1)).queries || []; } catch { return []; }
+  try {
+    const raw = await chat(REWRITE_PROMPT, q, 200);
+    return JSON.parse(raw.slice(raw.indexOf("{"), raw.lastIndexOf("}") + 1)).queries || [];
+  } catch {
+    return [];
+  }
 }
 
 const configs = [
   { name: "BM25 seul", run: async (q) => retriever.search(q, { k: 10, expand: false }) },
   { name: "BM25 + synonymes métier", run: async (q) => retriever.search(q, { k: 10, expand: true }) },
 ];
-if (process.env.ANTHROPIC_API_KEY) {
+if (llmAvailable()) {
   configs.push({
-    name: "BM25 + synonymes + reformulation LLM",
+    name: `BM25 + synonymes + reformulation LLM (${llmProvider().model})`,
     run: async (q) => fuse([q, ...(await rewrite(q))].map((x) => retriever.search(x, { k: 10 })), 10),
   });
 }

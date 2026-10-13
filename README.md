@@ -6,6 +6,8 @@ Cet assistant répond à ces questions **uniquement à partir des pages officiel
 
 **Démo : https://assistant-suisse.netlify.app**
 
+Coût de fonctionnement : **0 CHF**. Tout repose sur des services gratuits et un modèle open source.
+
 > *EN : A retrieval-augmented assistant for newcomers and cross-border workers in Switzerland. It answers only from official government pages, cites every source, and its retrieval quality is measured on a set of real newcomer questions.*
 
 [![Tests](https://github.com/Toumil94/assistant-rag-suisse/actions/workflows/ci.yml/badge.svg)](https://github.com/Toumil94/assistant-rag-suisse/actions/workflows/ci.yml)
@@ -22,10 +24,10 @@ flowchart LR
         D --> E[Évaluation<br/>40 questions]
     end
     subgraph Requete [À chaque question, fonction Netlify]
-        Q[Question] --> R[Claude<br/>reformule en vocabulaire administratif]
+        Q[Question] --> R[LLM open source<br/>reformule en vocabulaire administratif]
         R --> S[BM25 + synonymes métier<br/>fusion RRF]
         D -.-> S
-        S --> T[Claude<br/>répond avec citations]
+        S --> T[LLM : réponse rédigée avec citations<br/>ou, sans LLM : phrases officielles extraites]
         T --> U[Réponse + sources]
     end
 ```
@@ -38,11 +40,12 @@ flowchart LR
 | **Sources officielles uniquement** | Sur l'administratif, une réponse fausse peut coûter cher (amende, délai manqué). Chaque information doit renvoyer à une page d'autorité. |
 | **Recherche lexicale BM25** plutôt qu'un index vectoriel | Le vocabulaire administratif est précis (« permis G », « LAMal », « OCPM ») : la correspondance exacte des termes compte. BM25 tient en mémoire dans une fonction serverless, sans base vectorielle ni coût d'embedding, et chaque résultat est explicable. |
 | **Dictionnaire de synonymes métier** | Les gens disent « frontalier » quand la page dit « permis G », ou « caisse maladie » pour « assurance obligatoire des soins ». Le dictionnaire relie ces vocabulaires. |
-| **Reformulation par le LLM + fusion RRF** | Claude traduit la question en 2-3 requêtes au vocabulaire officiel. Les classements sont fusionnés par Reciprocal Rank Fusion, robuste et sans paramètre à régler. |
+| **Reformulation par le LLM + fusion RRF** | Le LLM traduit la question en 2-3 requêtes au vocabulaire officiel. Les classements sont fusionnés par Reciprocal Rank Fusion, robuste et sans paramètre à régler. |
 | **Diversité des sources** | Au plus deux passages par page, pour croiser plusieurs sources dans une réponse. |
 | **Réponse ancrée et citée** | Le modèle n'a le droit d'utiliser que les passages fournis, doit citer [n] chaque information, et dire quand les sources ne suffisent pas. |
 | **Évaluation chiffrée** | Un jeu de 40 questions réelles de nouveaux arrivants mesure si la bonne page est retrouvée, pour comparer les configurations et éviter les régressions. |
-| **Coûts maîtrisés** | Modèle Claude léger, réponses plafonnées, 20 questions par heure et par adresse IP. |
+| **100 % gratuit** | Modèle open source gpt-oss-120b via le niveau gratuit de Groq, GitHub Actions gratuit pour un dépôt public, hébergement Netlify gratuit. Le corpus est relu depuis GitHub, donc le site n'est redéployé que si le code change. 30 questions par heure et par adresse IP. |
+| **Toujours disponible** | Sans clé d'IA, ou quand le quota gratuit du jour est atteint, l'assistant bascule en mode « extraits » : il sélectionne et cite mot pour mot les phrases officielles les plus pertinentes (scoring IDF, diversité MMR). Aucune hallucination possible dans ce mode. |
 
 ## Évaluation de la recherche
 
@@ -70,7 +73,7 @@ pip install -r requirements.txt
 python ingest/crawl.py && python ingest/chunk.py   # ~15 min, une requête par seconde
 node eval/run.mjs                                   # évaluation de la recherche
 node --test tests/*.test.mjs                        # tests unitaires
-npx netlify dev                                     # site + API, avec ANTHROPIC_API_KEY dans l'environnement
+npx netlify dev                                     # site + API ; GROQ_API_KEY (gratuit) active les réponses rédigées
 ```
 
 ## Limites

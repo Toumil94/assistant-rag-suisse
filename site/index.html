@@ -69,6 +69,10 @@ a{color:inherit}button,textarea{font:inherit;color:inherit}
 .src details summary{cursor:pointer}
 .src.flash{background:#FFF7D6}
 .meta-line{font-size:13px;color:var(--slate);margin-top:10px}
+.mode{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:3px 9px;margin-bottom:12px;border:1px solid var(--rule);background:var(--paper)}
+.mode.gen{border-color:var(--ink)}
+.mode i{width:8px;height:8px;border-radius:50%;background:var(--slate)}
+.mode.gen i{background:var(--red)}
 .disclaimer{font-size:14px;color:var(--slate);border-top:1px solid var(--rule);padding:14px 0 0;margin-top:10px}
 
 /* comment ça marche */
@@ -117,12 +121,12 @@ footer .wrap{max-width:1180px;display:flex;justify-content:space-between;gap:16p
 
 <section class="how" id="comment"><div class="wrap">
   <h2>Comment ça marche</h2>
-  <p>Un système RAG (Retrieval-Augmented Generation) : l'IA ne répond pas de mémoire, elle s'appuie sur des passages retrouvés dans les pages officielles et doit les citer.</p>
+  <p>Un système RAG (Retrieval-Augmented Generation) : l'IA ne répond pas de mémoire, elle s'appuie sur des passages retrouvés dans les pages officielles et doit les citer. Tout tourne sur des services gratuits : GitHub Actions, Netlify et un modèle open source via le niveau gratuit de Groq.</p>
   <ol class="pipe">
     <li><b>Collecte</b><span>Chaque semaine, GitHub Actions parcourt ch.ch, ge.ch, le SEM et l'OFSP, en respectant robots.txt.</span></li>
     <li><b>Découpage</b><span>Le texte utile de chaque page est découpé en passages d'environ 900 caractères, avec leur source.</span></li>
-    <li><b>Recherche</b><span>Claude reformule la question en vocabulaire administratif suisse, puis une recherche BM25 enrichie de synonymes métier trouve les meilleurs passages.</span></li>
-    <li><b>Réponse</b><span>Claude répond uniquement à partir de ces passages, en citant chaque information. Sans source, il le dit.</span></li>
+    <li><b>Recherche</b><span>Une IA open source reformule la question en vocabulaire administratif suisse, puis une recherche BM25 enrichie de synonymes métier trouve les meilleurs passages.</span></li>
+    <li><b>Réponse</b><span>L'IA répond uniquement à partir de ces passages, en citant chaque information. Si elle n'est pas disponible, l'assistant cite directement les phrases officielles les plus pertinentes.</span></li>
   </ol>
   <div id="evalbox"></div>
 </div></section>
@@ -184,8 +188,10 @@ footer .wrap{max-width:1180px;display:flex;justify-content:space-between;gap:16p
         if(!res.ok||res.j.error){card.classList.add('err');card.innerHTML='<p>'+esc(res.j.error||'Une erreur est survenue.')+'</p>';return;}
         var j=res.j;
         var srcs=j.sources.map(function(s){return '<div class="src'+(s.cited?' cited':'')+'" id="s-'+id+'-'+s.n+'"><span class="n">'+s.n+'</span><div><a href="'+esc(s.url)+'" target="_blank" rel="noopener">'+esc(s.title)+'</a><small>'+esc(s.site)+'</small><details><summary>Extrait utilisé</summary>'+esc(s.excerpt)+'…</details></div></div>';}).join('');
-        card.innerHTML='<div class="answer">'+render(j.answer,id)+'</div>'+(srcs?'<div class="srcs"><h3>Sources officielles</h3>'+srcs+'</div>':'')+
-          '<p class="meta-line">Recherche avec : '+j.queries.slice(1).map(function(x){return '« '+esc(x)+' »';}).join(', ')+(j.timings&&j.timings.total_ms?' · '+(j.timings.total_ms/1000).toFixed(1).replace('.',',')+' s':'')+'</p>';
+        var modeTxt=j.mode==='generative'?'Réponse rédigée par une IA open source ('+esc(j.model||'')+'), à partir des sources ci-dessous'
+          :(j.note==='quota'?'Extraits des pages officielles (quota gratuit d\'IA atteint pour aujourd\'hui)':'Extraits des pages officielles, cités mot pour mot');
+        card.innerHTML='<div class="mode'+(j.mode==='generative'?' gen':'')+'"><i></i>'+modeTxt+'</div><div class="answer">'+render(j.answer,id)+'</div>'+(srcs?'<div class="srcs"><h3>Sources officielles</h3>'+srcs+'</div>':'')+
+          '<p class="meta-line">'+(j.queries.length>1?'Recherche avec : '+j.queries.slice(1).map(function(x){return '« '+esc(x)+' »';}).join(', '):'Recherche directe dans les pages officielles')+(j.timings&&j.timings.total_ms?' · '+(j.timings.total_ms/1000).toFixed(1).replace('.',',')+' s':'')+'</p>';
         card.querySelectorAll('.cite').forEach(function(a){a.addEventListener('click',function(){var t=document.getElementById(a.getAttribute('href').slice(1));if(t){t.classList.add('flash');setTimeout(function(){t.classList.remove('flash');},1400);}});});
         q.value='';q.style.height='auto';
       })
@@ -193,7 +199,7 @@ footer .wrap{max-width:1180px;display:flex;justify-content:space-between;gap:16p
       .finally(function(){busy=false;go.disabled=false;go.textContent='Demander';});
   }
 
-  fetch('eval.json',{cache:'no-store'}).then(function(r){return r.json();}).then(function(e){
+  fetch('https://raw.githubusercontent.com/Toumil94/assistant-rag-suisse/main/eval/results.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r;}).catch(function(){return fetch('eval.json');}).then(function(r){return r.json();}).then(function(e){
     if(!e.results)return;
     document.getElementById('npages').textContent=e.corpus.n_pages+' pages officielles';
     var pct=function(x){return Math.round(x*100)+' %';};

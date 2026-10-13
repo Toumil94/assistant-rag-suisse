@@ -1,6 +1,10 @@
 [build]
   publish = "site"
   command = ""
+  # Le corpus et l'évaluation sont mis à jour chaque semaine par GitHub Actions et relus
+  # directement depuis GitHub par le site : inutile de redéployer pour un changement de données.
+  # On ne reconstruit donc que si le code change (économise le quota gratuit de Netlify).
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- site/index.html netlify/functions/ask.mjs netlify/functions/lib netlify.toml package.json"
 
 [functions]
   directory = "netlify/functions"
