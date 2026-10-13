@@ -1,15 +1,15 @@
 {
-  "evaluated_at": "2026-10-12",
+  "evaluated_at": "2026-10-13",
   "corpus": {
     "n_pages": 327,
-    "n_chunks": 1161,
+    "n_chunks": 1157,
     "sites": [
       "OFSP (assurance maladie)",
       "SEM (Secrétariat d'État aux migrations)",
       "ch.ch (portail officiel de la Confédération)",
       "ge.ch (État de Genève)"
     ],
-    "fetched_at": "2026-10-12"
+    "fetched_at": "2026-10-13"
   },
   "results": [
     {

@@ -1,6 +1,6 @@
 # Résultats de l'évaluation de la recherche
 
-40 questions de nouveaux arrivants, corpus de 327 pages officielles (1161 passages). Évalué le 2026-10-12.
+40 questions de nouveaux arrivants, corpus de 327 pages officielles (1157 passages). Évalué le 2026-10-13.
 
 | Configuration | Bonne page en 1re position | Bonne page dans le top 5 | MRR@10 |
 |---|---|---|---|
