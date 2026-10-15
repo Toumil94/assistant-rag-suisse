@@ -87,7 +87,14 @@ export default async (req, context) => {
       // sinon : la reformulation est un plus, on cherche avec la question telle quelle
     }
   }
-  const passages = fuse(queries.map((q) => retriever.search(q, { k: 8 })), 6);
+  // Les passages d'une même page sont regroupés : une source = une page officielle.
+  const merged = new Map();
+  for (const p of fuse(queries.map((q) => retriever.search(q, { k: 8 })), 6)) {
+    const m = merged.get(p.url);
+    if (m) m.text += "\n[…]\n" + p.text;
+    else merged.set(p.url, { ...p });
+  }
+  const passages = [...merged.values()];
   const tRetrieve = Date.now() - t0;
 
   if (!passages.length) {
